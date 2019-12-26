@@ -34,7 +34,8 @@ static NSString * const PREFS_KEY_DEEPLINK_CLICK_TIME = @"adj_deeplink_click_tim
 }
 
 + (NSString *)getPushTokenString {
-    return [[NSUserDefaults standardUserDefaults] objectForKey:PREFS_KEY_PUSH_TOKEN_STRING];
+    // Changed because this causes crash
+    return @"";
 }
 
 + (void)removePushToken {

@@ -118,7 +118,8 @@ static dispatch_once_t onceToken = 0;
 }
 
 + (void)setPushToken:(NSString *)pushToken {
-    [[Adjust getInstance] setPushToken:pushToken];
+    // Changed because this causes crash
+    return;
 }
 
 + (void)setOfflineMode:(BOOL)enabled {

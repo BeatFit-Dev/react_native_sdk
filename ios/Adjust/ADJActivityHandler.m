@@ -361,11 +361,8 @@ typedef NS_ENUM(NSInteger, AdjADClientError) {
 }
 
 - (void)setPushToken:(NSString *)pushToken {
-    [ADJUtil launchInQueue:self.internalQueue
-                selfInject:self
-                     block:^(ADJActivityHandler * selfI) {
-                         [selfI setPushTokenI:selfI pushToken:pushToken];
-                     }];
+    // Changed because this causes crash
+    return;
 }
 
 - (void)setGdprForgetMe {
