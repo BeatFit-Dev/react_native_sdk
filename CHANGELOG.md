@@ -1,3 +1,49 @@
+### Version 4.23.0 (28th August 2020)
+#### Added
+- Added communication with SKAdNetwork framework by default on iOS 14.
+- Added method `deactivateSKAdNetworkHandling` method to `AdjustConfig` to switch off default communication with SKAdNetwork framework in iOS 14.
+- Added wrapper method `requestTrackingAuthorizationWithCompletionHandler` to `Adjust` to allow asking for user's consent to be tracked in iOS 14 and immediate propagation of user's choice to backend.
+- Added handling of new iAd framework error codes introduced in iOS 14.
+- Added sending of value of user's consent to be tracked with each package.
+- Added `setUrlStrategy` method to `AdjustConfig` class to allow selection of URL strategy for specific market.
+
+⚠️ **Note**: iOS 14 beta versions prior to 5 appear to have an issue when trying to use iAd framework API like described in [here](https://github.com/adjust/ios_sdk/issues/452). For testing of v4.23.0 version of SDK in iOS, please make sure you're using **iOS 14 beta 5 or later**.
+
+#### Native SDKs
+- [iOS@v4.23.0][ios_sdk_v4.23.0]
+- [Android@v4.24.0][android_sdk_v4.24.0]
+
+---
+
+### Version 4.22.0 (6th June 2020)
+#### Added
+- Added subscription tracking feature.
+- Added OAID plugin for Adjust SDK named `react-native-adjust-oaid`. With this plugin added next to Adjust SDK, SDK will be able to read Open Advertising ID if present on the device.
+- Added support for Huawei App Gallery install referrer.
+
+#### Changed
+- Updated communication flow with `iAd.framework`.
+
+#### Native SDKs
+- [iOS@v4.22.1][ios_sdk_v4.22.1]
+- [Android@v4.22.0][android_sdk_v4.22.0]
+
+---
+
+### Version 4.21.0 (1st April 2020)
+#### Added
+- Added `disableThirdPartySharing` method to `Adjust` interface to allow disabling of data sharing with third parties outside of Adjust ecosystem.
+- Added support for signature library as a plugin.
+- Added more aggressive sending retry logic for install session package.
+- Added additional parameters to `ad_revenue` package payload.
+- Added external device ID support.
+
+#### Native SDKs
+- [iOS@v4.21.0][ios_sdk_v4.21.0]
+- [Android@v4.21.0][android_sdk_v4.21.0]
+
+---
+
 ### Version 4.18.2 (11th October 2019)
 #### Added
 - Added `convertUniversalLink` method from native iOS SDK to JS API (thanks to @tootsweet).
@@ -322,6 +368,10 @@
 [ios_sdk_v4.17.2]: https://github.com/adjust/ios_sdk/tree/v4.17.2
 [ios_sdk_v4.18.0]: https://github.com/adjust/ios_sdk/tree/v4.18.0
 [ios_sdk_v4.18.3]: https://github.com/adjust/ios_sdk/tree/v4.18.3
+[ios_sdk_v4.21.0]: https://github.com/adjust/ios_sdk/tree/v4.21.0
+[ios_sdk_v4.21.3]: https://github.com/adjust/ios_sdk/tree/v4.21.3
+[ios_sdk_v4.22.1]: https://github.com/adjust/ios_sdk/tree/v4.22.1
+[ios_sdk_v4.23.0]: https://github.com/adjust/ios_sdk/tree/v4.23.0
 
 [android_sdk_v4.10.4]: https://github.com/adjust/android_sdk/tree/v4.10.4
 [android_sdk_v4.11.0]: https://github.com/adjust/android_sdk/tree/v4.11.0
@@ -339,3 +389,7 @@
 [android_sdk_v4.17.0]: https://github.com/adjust/android_sdk/tree/v4.17.0
 [android_sdk_v4.18.0]: https://github.com/adjust/android_sdk/tree/v4.18.0
 [android_sdk_v4.18.3]: https://github.com/adjust/android_sdk/tree/v4.18.3
+[android_sdk_v4.21.0]: https://github.com/adjust/android_sdk/tree/v4.21.0
+[android_sdk_v4.21.1]: https://github.com/adjust/android_sdk/tree/v4.21.1
+[android_sdk_v4.22.0]: https://github.com/adjust/android_sdk/tree/v4.22.0
+[android_sdk_v4.24.0]: https://github.com/adjust/android_sdk/tree/v4.24.0

@@ -53,7 +53,19 @@ Adjust.sendFirstPackages = function() {
 
 Adjust.trackAdRevenue = function(source, payload) {
     module_adjust.trackAdRevenue(source, payload);
-}
+};
+
+Adjust.trackAppStoreSubscription = function(subscription) {
+    if (Platform.OS === "ios") {
+        module_adjust.trackAppStoreSubscription(subscription);
+    }
+};
+
+Adjust.trackPlayStoreSubscription = function(subscription) {
+    if (Platform.OS === "android") {
+        module_adjust.trackPlayStoreSubscription(subscription);
+    }
+};
 
 Adjust.addSessionCallbackParameter = function(key, value) {
     if (typeof key !== 'string' || typeof value !== 'string') {
@@ -87,7 +99,11 @@ Adjust.resetSessionPartnerParameters = function() {
 
 Adjust.gdprForgetMe = function() {
     module_adjust.gdprForgetMe();
-}
+};
+
+Adjust.disableThirdPartySharing = function() {
+    module_adjust.disableThirdPartySharing();
+};
 
 Adjust.getIdfa = function(callback) {
     module_adjust.getIdfa(callback);
@@ -110,11 +126,13 @@ Adjust.getAmazonAdId = function(callback) {
 };
 
 Adjust.getSdkVersion = function(callback) {
-    module_adjust.getSdkVersion("react-native4.18.2", callback);
-}
+    module_adjust.getSdkVersion("react-native4.23.0", callback);
+};
 
 Adjust.setReferrer = function(referrer) {
-    module_adjust.setReferrer(referrer);
+    if (Platform.OS === "android") {
+        module_adjust.setReferrer(referrer);
+    }
 };
 
 Adjust.convertUniversalLink = function(url, scheme, callback) {
@@ -122,7 +140,11 @@ Adjust.convertUniversalLink = function(url, scheme, callback) {
         return;
     }
     module_adjust.convertUniversalLink(url, scheme, callback);
-}
+};
+
+Adjust.requestTrackingAuthorizationWithCompletionHandler = function(callback) {
+    module_adjust.requestTrackingAuthorizationWithCompletionHandler(callback);
+};
 
 Adjust.componentWillUnmount = function() {
     if (AdjustConfig.AttributionSubscription != null) {
@@ -190,7 +212,7 @@ Adjust.onPause = function(testParam) {
 // AdjustConfig
 
 var AdjustConfig = function(appToken, environment) {
-    this.sdkPrefix = "react-native4.18.2";
+    this.sdkPrefix = "react-native4.23.0";
     this.appToken = appToken;
     this.environment = environment;
     this.logLevel = null;
@@ -201,14 +223,20 @@ var AdjustConfig = function(appToken, environment) {
     this.userAgent = null;
     this.isDeviceKnown = null;
     this.defaultTracker = null;
+    this.externalDeviceId = null;
     this.secretId = null;
     this.info1 = null;
     this.info2 = null;
     this.info3 = null;
     this.info4 = null;
+    this.urlStrategy = null;
     // Android only
     this.processName = null;
     this.readMobileEquipmentIdentity = null;
+    // iOS only
+    this.allowiAdInfoReading = null;
+    this.allowIdfaReading = null;
+    this.skAdNetworkHandling = null;
 };
 
 AdjustConfig.EnvironmentSandbox = "sandbox";
@@ -226,6 +254,8 @@ AdjustConfig.EventTrackingFailedSubscription = null;
 AdjustConfig.SessionTrackingSucceededSubscription = null;
 AdjustConfig.SessionTrackingFailedSubscription = null;
 AdjustConfig.DeferredDeeplinkSubscription = null;
+AdjustConfig.UrlStrategyChina = "china";
+AdjustConfig.UrlStrategyIndia = "india";
 
 AdjustConfig.prototype.setEventBufferingEnabled = function(isEnabled) {
     this.eventBufferingEnabled = isEnabled;
@@ -241,6 +271,10 @@ AdjustConfig.prototype.setProcessName = function(processName) {
 
 AdjustConfig.prototype.setDefaultTracker = function(defaultTracker) {
     this.defaultTracker = defaultTracker;
+};
+
+AdjustConfig.prototype.setExternalDeviceId = function(externalDeviceId) {
+    this.externalDeviceId = externalDeviceId;
 };
 
 AdjustConfig.prototype.setUserAgent = function(userAgent) {
@@ -281,12 +315,28 @@ AdjustConfig.prototype.setSdkPrefix = function(sdkPrefix) {
     this.sdkPrefix = sdkPrefix;
 };
 
+AdjustConfig.prototype.setUrlStrategy = function(urlStrategy) {
+    this.urlStrategy = urlStrategy;
+};
+
 AdjustConfig.prototype.setReadMobileEquipmentIdentity = function(readMobileEquipmentIdentity) {
     // this.readMobileEquipmentIdentity = readMobileEquipmentIdentity;
 };
 
+AdjustConfig.prototype.setAllowiAdInfoReading = function(allowiAdInfoReading) {
+    this.allowiAdInfoReading = allowiAdInfoReading;
+};
+
+AdjustConfig.prototype.setAllowIdfaReading = function(allowIdfaReading) {
+    this.allowIdfaReading = allowIdfaReading;
+};
+
 AdjustConfig.prototype.setShouldLaunchDeeplink = function(shouldLaunchDeeplink) {
     this.shouldLaunchDeeplink = shouldLaunchDeeplink;
+};
+
+AdjustConfig.prototype.deactivateSKAdNetworkHandling = function() {
+    this.skAdNetworkHandling = false;
 };
 
 AdjustConfig.prototype.setAttributionCallbackListener = function(attributionCallbackListener) {
@@ -384,4 +434,71 @@ AdjustEvent.prototype.setCallbackId = function(callbackId) {
     this.callbackId = callbackId;
 };
 
-module.exports = { Adjust, AdjustEvent, AdjustConfig }
+// AdjustAppStoreSubscription
+
+var AdjustAppStoreSubscription = function(price, currency, transactionId, receipt) {
+    this.price = price;
+    this.currency = currency;
+    this.transactionId = transactionId;
+    this.receipt = receipt;
+    this.transactionDate = null;
+    this.salesRegion = null;
+    this.callbackParameters = {};
+    this.partnerParameters = {};
+};
+
+AdjustAppStoreSubscription.prototype.setTransactionDate = function(transactionDate) {
+    this.transactionDate = transactionDate;
+};
+
+AdjustAppStoreSubscription.prototype.setSalesRegion = function(salesRegion) {
+    this.salesRegion = salesRegion;
+};
+
+AdjustAppStoreSubscription.prototype.addCallbackParameter = function(key, value) {
+    if (typeof key !== 'string' || typeof value !== 'string') {
+        return;
+    }
+    this.callbackParameters[key] = value;
+};
+
+AdjustAppStoreSubscription.prototype.addPartnerParameter = function(key, value) {
+    if (typeof key !== 'string' || typeof value !== 'string') {
+        return;
+    }
+    this.partnerParameters[key] = value;
+};
+
+// AdjustPlayStoreSubscription
+
+var AdjustPlayStoreSubscription = function(price, currency, sku, orderId, signature, purchaseToken) {
+    this.price = price;
+    this.currency = currency;
+    this.sku = sku;
+    this.orderId = orderId;
+    this.signature = signature;
+    this.purchaseToken = purchaseToken;
+    this.purchaseTime = null;
+    this.callbackParameters = {};
+    this.partnerParameters = {};
+};
+
+AdjustPlayStoreSubscription.prototype.setPurchaseTime = function(purchaseTime) {
+    this.purchaseTime = purchaseTime;
+};
+
+AdjustPlayStoreSubscription.prototype.addCallbackParameter = function(key, value) {
+    if (typeof key !== 'string' || typeof value !== 'string') {
+        return;
+    }
+    this.callbackParameters[key] = value;
+};
+
+AdjustPlayStoreSubscription.prototype.addPartnerParameter = function(key, value) {
+    if (typeof key !== 'string' || typeof value !== 'string') {
+        return;
+    }
+    this.partnerParameters[key] = value;
+};
+
+module.exports = { Adjust, AdjustEvent, AdjustConfig, AdjustAppStoreSubscription, AdjustPlayStoreSubscription }

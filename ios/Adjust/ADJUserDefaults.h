@@ -39,6 +39,16 @@
 
 + (void)removeDeeplink;
 
++ (void)setDisableThirdPartySharing;
+
++ (BOOL)getDisableThirdPartySharing;
+
++ (void)removeDisableThirdPartySharing;
+
 + (void)clearAdjustStuff;
+
++ (void)saveiAdErrorKey:(NSString *)key;
++ (NSDictionary<NSString *, NSNumber *> *)getiAdErrors;
++ (void)cleariAdErrors;
 
 @end

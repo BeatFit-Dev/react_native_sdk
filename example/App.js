@@ -3,7 +3,7 @@
  * https://github.com/facebook/react-native
  *
  * @format
- * @flow
+ * @flow strict-local
  */
 
 import React from 'react';
@@ -28,6 +28,7 @@ import {
   AdjustEvent,
   AdjustConfig
 } from 'react-native-adjust';
+import { AdjustOaid } from 'react-native-adjust-oaid';
 
 const App: () => React$Node = () => {
   Adjust.getSdkVersion(function(sdkVersion) {
@@ -39,6 +40,8 @@ const App: () => React$Node = () => {
   // adjustConfig.setDelayStart(6.0);
   // adjustConfig.setEventBufferingEnabled(true);
   // adjustConfig.setUserAgent("Custom Adjust User Agent");
+  adjustConfig.setUrlStrategy(AdjustConfig.UrlStrategyChina);
+  adjustConfig.deactivateSKAdNetworkHandling();
 
   adjustConfig.setAttributionCallbackListener(function(attribution) {
     console.log("Attribution callback received");
@@ -107,6 +110,29 @@ const App: () => React$Node = () => {
   // Adjust.resetSessionCallbackParameters();
   // Adjust.resetSessionPartnerParameters();
 
+  Adjust.requestTrackingAuthorizationWithCompletionHandler(function (status) {
+    console.log("Authorization status update");
+    switch (status) {
+        case 0:
+            // ATTrackingManagerAuthorizationStatusNotDetermined case
+            console.log("Authorization status: ATTrackingManagerAuthorizationStatusNotDetermined");
+            break;
+        case 1:
+            // ATTrackingManagerAuthorizationStatusRestricted case
+            console.log("Authorization status: ATTrackingManagerAuthorizationStatusRestricted");
+            break;
+        case 2:
+            // ATTrackingManagerAuthorizationStatusDenied case
+            console.log("Authorization status: ATTrackingManagerAuthorizationStatusDenied");
+            break;
+        case 3:
+            // ATTrackingManagerAuthorizationStatusAuthorized case
+            console.log("Authorization status: ATTrackingManagerAuthorizationStatusAuthorized");
+            break;
+    }
+  });
+
+  AdjustOaid.readOaid();
   Adjust.create(adjustConfig);
 
   function componentDidMount() {

@@ -60,8 +60,13 @@
 
     _appToken = appToken;
     _environment = environment;
+    
     // default values
+    self.sendInBackground = NO;
     self.eventBufferingEnabled = NO;
+    self.allowIdfaReading = YES;
+    self.allowiAdInfoReading = YES;
+    _isSKAdNetworkHandlingActive = YES;
 
     return self;
 }
@@ -75,6 +80,10 @@
 {
     [self.logger setLogLevel:logLevel
      isProductionEnvironment:[ADJEnvironmentProduction isEqualToString:environment]];
+}
+
+- (void)deactivateSKAdNetworkHandling {
+    _isSKAdNetworkHandlingActive = NO;
 }
 
 - (void)setDelegate:(NSObject<AdjustDelegate> *)delegate {
@@ -190,11 +199,16 @@
         copy.defaultTracker = [self.defaultTracker copyWithZone:zone];
         copy.eventBufferingEnabled = self.eventBufferingEnabled;
         copy.sendInBackground = self.sendInBackground;
+        copy.allowIdfaReading = self.allowIdfaReading;
+        copy.allowiAdInfoReading = self.allowiAdInfoReading;
         copy.delayStart = self.delayStart;
         copy.userAgent = [self.userAgent copyWithZone:zone];
+        copy.externalDeviceId = [self.externalDeviceId copyWithZone:zone];
         copy.isDeviceKnown = self.isDeviceKnown;
         copy->_secretId = [self.secretId copyWithZone:zone];
         copy->_appSecret = [self.appSecret copyWithZone:zone];
+        copy->_isSKAdNetworkHandlingActive = self.isSKAdNetworkHandlingActive;
+        copy->_urlStrategy = [self.urlStrategy copyWithZone:zone];
         // adjust delegate not copied
     }
 

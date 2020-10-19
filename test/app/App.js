@@ -3,7 +3,7 @@
  * https://github.com/facebook/react-native
  *
  * @format
- * @flow
+ * @flow strict-local
  */
 
 import React from 'react';
@@ -49,13 +49,16 @@ const App: () => React$Node = () => {
 
   var baseUrl = "";
   var gdprUrl = "";
-  var ipAddress = "192.168.8.1";
+  var subscriptionUrl = "";
+  var ipAddress = "192.168.86.32";
   if (Platform.OS === "android") {
     baseUrl = "https://" + ipAddress + ":8443";
     gdprUrl = "https://" + ipAddress + ":8443";
+    subscriptionUrl = "https://" + ipAddress + ":8443";
   } else if (Platform.OS === "ios") {
-    baseUrl = "http://" + ipAddress + ":8000";
-    gdprUrl = "http://" + ipAddress + ":8000";
+    baseUrl = "http://" + ipAddress + ":8080";
+    gdprUrl = "http://" + ipAddress + ":8080";
+    subscriptionUrl = "http://" + ipAddress + ":8080";
   }
   var controlUrl = "ws://" + ipAddress + ":1987";
 
@@ -65,12 +68,12 @@ const App: () => React$Node = () => {
     AdjustSdkTest.startTestSession(baseUrl, controlUrl, sdkVersion);
   });
 
-  const commandExecutor = new CommandExecutor(baseUrl, gdprUrl);
+  const commandExecutor = new CommandExecutor(baseUrl, gdprUrl, subscriptionUrl);
   emitterSubscription = AdjustSdkTestEmitter.addListener('command', (json) => {
-    const className    = json["className"];
+    const className = json["className"];
     const functionName = json["functionName"];
-    const params       = json["params"];
-    const order        = json["order"];
+    const params = json["params"];
+    const order = json["order"];
     commandExecutor.scheduleCommand(className, functionName, params, order);
   });
 
