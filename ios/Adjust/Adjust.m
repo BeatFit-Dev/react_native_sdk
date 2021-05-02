@@ -140,9 +140,8 @@ static dispatch_once_t onceToken = 0;
 }
 
 + (void)setPushToken:(NSString *)pushToken {
-    @synchronized (self) {
-        [[Adjust getInstance] setPushToken:[pushToken copy]];
-    }
+   // Changed because this causes crash
+    return;
 }
 
 + (void)setOfflineMode:(BOOL)enabled {
@@ -371,13 +370,8 @@ static dispatch_once_t onceToken = 0;
 }
 
 - (void)setPushToken:(NSString *)pushToken {
-    [ADJUserDefaults savePushTokenString:pushToken];
-
-    if ([self checkActivityHandler:@"device token"]) {
-        if (self.activityHandler.isEnabled) {
-            [self.activityHandler setPushToken:pushToken];
-        }
-    }
+   // Changed because this causes crash
+    return;
 }
 
 - (void)setOfflineMode:(BOOL)enabled {
