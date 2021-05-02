@@ -191,7 +191,7 @@
 - (NSString *)adjDeviceName {
     size_t size;
     sysctlbyname("hw.machine", NULL, &size, NULL, 0);
-    char *name = malloc(size);
+    char *name = calloc(1, size);
     sysctlbyname("hw.machine", name, &size, NULL, 0);
     NSString *machine = [NSString stringWithUTF8String:name];
     free(name);
@@ -212,111 +212,6 @@
         return [UIDevice.currentDevice.identifierForVendor UUIDString];
     }
     return @"";
-}
-
-- (NSString *)adjDeviceId:(ADJDeviceInfo *)deviceInfo {
-    int languageMaxLength = 16;
-    NSString *language = deviceInfo.languageCode;
-    NSString *binaryLanguage = [ADJUtil stringToBinaryString:language];
-    NSString *binaryLanguageFormatted = [ADJUtil enforceParameterLength:binaryLanguage withMaxlength:languageMaxLength];
-    
-    int hardwareNameMaxLength = 48;
-    NSString *hardwareName = deviceInfo.machineModel;
-    NSString *binaryHardwareName = [ADJUtil stringToBinaryString:hardwareName];
-    NSString *binaryHardwareNameFormatted = [ADJUtil enforceParameterLength:binaryHardwareName withMaxlength:hardwareNameMaxLength];
-    
-    NSArray *versionParts = [deviceInfo.systemVersion componentsSeparatedByString:@"."];
-    int osVersionMajor = [[versionParts objectAtIndex:0] intValue];
-    int osVersionMinor = [[versionParts objectAtIndex:1] intValue];
-    int osVersionPatch = [versionParts count] == 3 ? [[versionParts objectAtIndex:2] intValue] : 0;
-
-    int osVersionMajorMaxLength = 8;
-    NSString *binaryOsVersionMajor = [ADJUtil decimalToBinaryString:osVersionMajor];
-    NSString *binaryOsVersionMajorFormatted = [ADJUtil enforceParameterLength:binaryOsVersionMajor withMaxlength:osVersionMajorMaxLength];
-    
-    int osVersionMinorMaxLength = 8;
-    NSString *binaryOsVersionMinor = [ADJUtil decimalToBinaryString:osVersionMinor];
-    NSString *binaryOsVersionMinorFormatted = [ADJUtil enforceParameterLength:binaryOsVersionMinor withMaxlength:osVersionMinorMaxLength];
-    
-    int osVersionPatchMaxLength = 8;
-    NSString *binaryOsVersionPatch = [ADJUtil decimalToBinaryString:osVersionPatch];
-    NSString *binaryOsVersionPatchFormatted = [ADJUtil enforceParameterLength:binaryOsVersionPatch withMaxlength:osVersionPatchMaxLength];
-
-    int mccMaxLength = 24;
-    NSString *mcc = [ADJUtil readMCC];
-    NSString *binaryMcc = [ADJUtil stringToBinaryString:mcc];
-    NSString *binaryMccFormatted = [ADJUtil enforceParameterLength:binaryMcc withMaxlength:mccMaxLength];
-
-    int mncMaxLength = 24;
-    NSString *mnc = [ADJUtil readMNC];
-    NSString *binaryMnc = [ADJUtil stringToBinaryString:mnc];
-    NSString *binaryMncFormatted = [ADJUtil enforceParameterLength:binaryMnc withMaxlength:mncMaxLength];
-    
-    int chargingStatusMaxLength = 8;
-    NSUInteger chargingStatus = [ADJSystemProfile chargingStatus];
-    NSString *binaryChargingStatus = [ADJUtil decimalToBinaryString:chargingStatus];
-    NSString *binaryChargingStatusFormatted = [ADJUtil enforceParameterLength:binaryChargingStatus withMaxlength:chargingStatusMaxLength];
-    
-    int batteryLevelMaxSize = 8;
-    NSUInteger batteryLevel = [ADJSystemProfile batteryLevel];
-    NSString *binaryBatteryLevel = [ADJUtil decimalToBinaryString:batteryLevel];
-    NSString *binaryBatteryLevelFormatted = [ADJUtil enforceParameterLength:binaryBatteryLevel withMaxlength:batteryLevelMaxSize];
-    
-    int totalSpaceMaxSize = 24;
-    NSUInteger totalSpace = [ADJSystemProfile totalDiskSpace];
-    NSString *binaryTotalSpace = [ADJUtil decimalToBinaryString:totalSpace];
-    NSString *binaryTotalSpaceFormatted = [ADJUtil enforceParameterLength:binaryTotalSpace withMaxlength:totalSpaceMaxSize];
-    
-    int freeSpaceMaxSize = 24;
-    NSUInteger freeSpace = [ADJSystemProfile freeDiskSpace];
-    NSString *binaryFreeSpace = [ADJUtil decimalToBinaryString:freeSpace];
-    NSString *binaryFreeSpaceFormatted = [ADJUtil enforceParameterLength:binaryFreeSpace withMaxlength:freeSpaceMaxSize];
-    
-    int systemUptimeMaxSize = 24;
-    NSUInteger systemUptime = [ADJSystemProfile systemUptime];
-    NSString *binarySystemUptime = [ADJUtil decimalToBinaryString:systemUptime];
-    NSString *binarySystemUptimeFormatted = [ADJUtil enforceParameterLength:binarySystemUptime withMaxlength:systemUptimeMaxSize];
-    
-    int lastBootTimeMaxSize = 32;
-    NSUInteger lastBootTime = [ADJSystemProfile lastBootTime];
-    NSString *binaryLastBootTime = [ADJUtil decimalToBinaryString:lastBootTime];
-    NSString *binaryLastBootTimeFormatted = [ADJUtil enforceParameterLength:binaryLastBootTime withMaxlength:lastBootTimeMaxSize];
-    
-    NSString *concatenated = [NSString stringWithFormat:@"%@%@%@%@%@%@%@%@%@%@%@%@%@",
-                              binaryLanguageFormatted,
-                              binaryHardwareNameFormatted,
-                              binaryOsVersionMajorFormatted,
-                              binaryOsVersionMinorFormatted,
-                              binaryOsVersionPatchFormatted,
-                              binaryMccFormatted,
-                              binaryMncFormatted,
-                              binaryChargingStatusFormatted,
-                              binaryBatteryLevelFormatted,
-                              binaryTotalSpaceFormatted,
-                              binaryFreeSpaceFormatted,
-                              binarySystemUptimeFormatted,
-                              binaryLastBootTimeFormatted];
-
-    // make sure concatenated string length is multiple of 4
-    if (concatenated.length % 4 != 0) {
-        int numberOfBits = concatenated.length % 4;
-        while (numberOfBits != 4) {
-            concatenated = [@"0" stringByAppendingString:concatenated];
-            numberOfBits += 1;
-        }
-    }
-    
-    NSString *mParameter = @"";
-    for (NSUInteger i = 0; i < concatenated.length; i += 4) {
-        // get fourplet substring
-        NSString *fourplet = [concatenated substringWithRange:NSMakeRange(i, 4)];
-        // convert fourplet to decimal number
-        long decimalFourplet = strtol([fourplet UTF8String], NULL, 2);
-        // append hex value of fourplet to final parameter
-        mParameter = [mParameter stringByAppendingString:[NSString stringWithFormat:@"%lX", decimalFourplet]];
-    }
-    
-    return mParameter;
 }
 
 - (void)adjCheckForiAd:(ADJActivityHandler *)activityHandler queue:(dispatch_queue_t)queue {
@@ -349,7 +244,7 @@
     }
 
     [logger debug:@"iAd framework successfully found in user's app"];
-
+    
     BOOL iAdInformationAvailable = [self setiAdWithDetails:activityHandler
                                    adcClientSharedInstance:ADClientSharedClientInstance
                                     queue:queue];
@@ -360,6 +255,57 @@
     }
 #pragma clang diagnostic pop
 #endif
+}
+
+- (NSString *)adjFetchAdServicesAttribution:(NSError **)errorPtr {
+    id<ADJLogger> logger = [ADJAdjustFactory logger];
+    
+    // [AAAttribution attributionTokenWithError:...]
+    Class attributionClass = NSClassFromString(@"AAAttribution");
+    if (attributionClass == nil) {
+        [logger warn:@"AdServices framework not found in user's app (AAAttribution not found)"];
+        
+        if (errorPtr) {
+            *errorPtr = [NSError errorWithDomain:@"com.adjust.sdk.adServices"
+                                            code:100
+                                        userInfo:@{@"Error reason": @"AdServices framework not found"}];
+        }
+        return nil;
+    }
+    
+    SEL attributionTokenSelector = NSSelectorFromString(@"attributionTokenWithError:");
+    if (![attributionClass respondsToSelector:attributionTokenSelector]) {
+        if (errorPtr) {
+            *errorPtr = [NSError errorWithDomain:@"com.adjust.sdk.adServices"
+                                            code:100
+                                        userInfo:@{@"Error reason": @"AdServices framework not found"}];
+        }
+        return nil;
+    }
+    
+    NSMethodSignature *attributionTokenMethodSignature = [attributionClass methodSignatureForSelector:attributionTokenSelector];
+    NSInvocation *tokenInvocation = [NSInvocation invocationWithMethodSignature:attributionTokenMethodSignature];
+    [tokenInvocation setSelector:attributionTokenSelector];
+    [tokenInvocation setTarget:attributionClass];
+    
+    __autoreleasing NSError *error;
+    __autoreleasing NSError **errorPointer = &error;
+    [tokenInvocation setArgument:&errorPointer atIndex:2];
+    [tokenInvocation invoke];
+    
+    if (error) {
+        [logger error:@"Error while retrieving AdServices attribution token: %@", error];
+        if (errorPtr) {
+            *errorPtr = error;
+        }
+        return nil;
+    }
+    
+    NSString * __unsafe_unretained tmpToken = nil;
+    [tokenInvocation getReturnValue:&tmpToken];
+    
+    NSString *token = tmpToken;
+    return token;
 }
 
 - (BOOL)setiAdWithDetails:(ADJActivityHandler *)activityHandler

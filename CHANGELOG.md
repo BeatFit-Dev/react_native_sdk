@@ -1,3 +1,41 @@
+### Version 4.28.0 (1th April 2021)
+#### Changed
+- Removed native iOS legacy code.
+
+#### Native SDKs
+- [iOS@v4.28.0][ios_sdk_v4.28.0]
+- [Android@v4.27.0][android_sdk_v4.27.0]
+
+---
+
+### Version 4.26.0 (18th February 2021)
+#### Added
+- Added possibility to get cost data information in attribution callback.
+- Added `setNeedsCost` method to `AdjustConfig` to indicate if cost data is needed in attribution callback (by default cost data will not be part of attribution callback if not enabled with this setter method).
+- Added `setPreinstallTrackingEnabled` method to `AdjustConfig` to allow enabling of preinstall tracking (this feature is OFF by default).
+- Added support for Apple Search Ads attribution with usage of `AdServices.framework`.
+- Added `setAllowAdServicesInfoReading` method to `AdjustConfig` to allow option for users to prevent SDK from performing any tasks related to Apple Search Ads attribution with usage of `AdServices.framework`.
+- Added wrapper method `updateConversionValue` method to `Adjust` to allow updating SKAdNetwork conversion value via SDK API.
+- Added `getAppTrackingAuthorizationStatus` getter to `Adjust` instance to be able to get current iOS app tracking status.
+- Added improved measurement consent management and third party sharing mechanism.
+- Added public constants to be used as sources for ad revenue tracking with `trackAdRevenue` method.
+
+#### Native SDKs
+- [iOS@v4.26.1][ios_sdk_v4.26.1]
+- [Android@v4.26.2][android_sdk_v4.26.2]
+
+---
+
+### Version 4.23.1 (6th November 2020)
+#### Added
+- Added support for autolinking.
+
+#### Native SDKs
+- [iOS@v4.23.2][ios_sdk_v4.23.2]
+- [Android@v4.24.1][android_sdk_v4.24.1]
+
+---
+
 ### Version 4.23.0 (28th August 2020)
 #### Added
 - Added communication with SKAdNetwork framework by default on iOS 14.
@@ -6,8 +44,6 @@
 - Added handling of new iAd framework error codes introduced in iOS 14.
 - Added sending of value of user's consent to be tracked with each package.
 - Added `setUrlStrategy` method to `AdjustConfig` class to allow selection of URL strategy for specific market.
-
-⚠️ **Note**: iOS 14 beta versions prior to 5 appear to have an issue when trying to use iAd framework API like described in [here](https://github.com/adjust/ios_sdk/issues/452). For testing of v4.23.0 version of SDK in iOS, please make sure you're using **iOS 14 beta 5 or later**.
 
 #### Native SDKs
 - [iOS@v4.23.0][ios_sdk_v4.23.0]
@@ -372,6 +408,9 @@
 [ios_sdk_v4.21.3]: https://github.com/adjust/ios_sdk/tree/v4.21.3
 [ios_sdk_v4.22.1]: https://github.com/adjust/ios_sdk/tree/v4.22.1
 [ios_sdk_v4.23.0]: https://github.com/adjust/ios_sdk/tree/v4.23.0
+[ios_sdk_v4.23.2]: https://github.com/adjust/ios_sdk/tree/v4.23.2
+[ios_sdk_v4.26.1]: https://github.com/adjust/ios_sdk/tree/v4.26.1
+[ios_sdk_v4.28.0]: https://github.com/adjust/ios_sdk/tree/v4.28.0
 
 [android_sdk_v4.10.4]: https://github.com/adjust/android_sdk/tree/v4.10.4
 [android_sdk_v4.11.0]: https://github.com/adjust/android_sdk/tree/v4.11.0
@@ -393,3 +432,6 @@
 [android_sdk_v4.21.1]: https://github.com/adjust/android_sdk/tree/v4.21.1
 [android_sdk_v4.22.0]: https://github.com/adjust/android_sdk/tree/v4.22.0
 [android_sdk_v4.24.0]: https://github.com/adjust/android_sdk/tree/v4.24.0
+[android_sdk_v4.24.1]: https://github.com/adjust/android_sdk/tree/v4.24.1
+[android_sdk_v4.26.2]: https://github.com/adjust/android_sdk/tree/v4.26.2
+[android_sdk_v4.27.0]: https://github.com/adjust/android_sdk/tree/v4.27.0
